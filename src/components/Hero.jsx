@@ -69,26 +69,10 @@ const Hero = () => {
 		setScanning(true);
 	};
 
-	/* const fetchProductDetails = async (code) => {
-	try {
-		const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/products/product-details/${code}`);
-		const product = res?.data?.data;
 
-		setProduct(product);
-
-		// Second: POST to another API using the received product
-		if (product) {
-			await axios.patch('${import.meta.env.VITE_API_BASE_URL}/products/add-product', product); // update with your real POST endpoint
-			console.log("Product saved successfully.");
-		}
-	} catch (error) {
-		console.error("API fetch failed:", error);
-	}
-}; */
 
 	const fetchProductDetails = async (code) => {
 		try {
-			// First: GET product details
 			const res = await fetch(
 				`${import.meta.env.VITE_API_BASE_URL}/products/product-details/${code}`
 			);
@@ -127,7 +111,7 @@ const Hero = () => {
 
 	return (
 		<div className="text-white">
-			<div className="max-w-[1200px] mt-[-96px] w-full h-screen mx-auto text-center flex flex-col justify-center">
+			<div className="max-w-[1200px] mt-[-96px] w-full h-[700px] mx-auto text-center flex flex-col justify-center">
 				<h1 className="text-[#00df9a] md:text-7xl sm:text-6xl text-4xl font-bold md:py-6">
 					Barcode-Driven Inventory.
 				</h1>
@@ -141,7 +125,7 @@ const Hero = () => {
 								handleClick();
 							}
 						}}
-						className="bg-[#00df9a] text-black px-6 py-2 rounded font-bold hover:bg-[#00c481] transition"
+						className="bg-[#00df9a] text-white px-6 py-2 rounded font-bold hover:bg-[#00c481] transition cursor-pointer"
 					>
 						{scanning ? 'Stop Scanning' : 'Start Scanning'}
 					</button>

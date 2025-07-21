@@ -24,7 +24,7 @@ const KanbanBoard = () => {
 		fetchData();
 	}, []);
 
-	const onDragEnd = async (result) => {
+	/* const onDragEnd = async (result) => {
 		const { destination, source, draggableId } = result;
 
 		if (!destination || destination.droppableId === source.droppableId) return;
@@ -44,15 +44,44 @@ const KanbanBoard = () => {
 				body: JSON.stringify({ category: destination.droppableId }),
 			}
 		);
+	}; */
+
+	const onDragEnd = async (result) => {
+		const { destination, source, draggableId } = result;
+
+		if (!destination || destination.droppableId === source.droppableId) return;
+
+		const updatedProducts = products.map((product) =>
+			product._id === draggableId
+				? { ...product, category: destination.droppableId }
+				: product
+		);
+		setProducts(updatedProducts);
+
+		const token = localStorage.getItem('token');
+
+		await fetch(
+			`${import.meta.env.VITE_API_BASE_URL}/products/${draggableId}`,
+			{
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+					authorization: `${token}`,
+				},
+				body: JSON.stringify({ category: destination.droppableId }),
+			}
+		);
 	};
 
 	const handleAddCategory = async () => {
 		if (!newCategoryName.trim()) return;
+		const token = localStorage.getItem('token');
 
-		await fetch(`${import.meta.env.VITE_API_BASE_URL}/categories/add-category`,
+		await fetch(
+			`${import.meta.env.VITE_API_BASE_URL}/categories/add-category`,
 			{
 				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
+				headers: { 'Content-Type': 'application/json', authorization: `${token}`, },
 				body: JSON.stringify({ category: newCategoryName }),
 			}
 		);
@@ -71,7 +100,7 @@ const KanbanBoard = () => {
 
 				<button
 					onClick={() => setShowInput(!showInput)}
-					className="bg-[#00df9a] text-black font-semibold px-6 py-2 rounded hover:bg-[#00c481] transition mb-6"
+					className="bg-[#00df9a] text-white font-semibold px-6 py-2 rounded hover:bg-[#00c481] transition mb-6 cursor-pointer"
 				>
 					{showInput ? 'Cancel' : 'Add Category'}
 				</button>
@@ -83,11 +112,11 @@ const KanbanBoard = () => {
 							value={newCategoryName}
 							onChange={(e) => setNewCategoryName(e.target.value)}
 							placeholder="Enter category name"
-							className="px-4 py-2 rounded text-black focus:outline-none"
+							className="px-4 py-2  border border-black rounded text-black focus:outline-none"
 						/>
 						<button
 							onClick={handleAddCategory}
-							className="bg-[#00df9a] text-black font-semibold px-4 py-2 rounded hover:bg-[#00c481] transition"
+							className="bg-[#00df9a] text-white font-semibold px-4 py-2 rounded hover:bg-[#00c481] transition cursor-pointer"
 						>
 							Submit
 						</button>
@@ -102,7 +131,7 @@ const KanbanBoard = () => {
 									<div
 										ref={provided.innerRef}
 										{...provided.droppableProps}
-										className="bg-[#1a1a1a] p-4 rounded-lg w-[250px] flex-shrink-0 shadow-md"
+										className="bg-[#fff] p-4 rounded-lg w-[250px] flex-shrink-0 shadow-md"
 									>
 										<h3 className="text-lg font-semibold text-[#00df9a] mb-4">
 											{category.category}
@@ -121,10 +150,14 @@ const KanbanBoard = () => {
 															ref={provided.innerRef}
 															{...provided.draggableProps}
 															{...provided.dragHandleProps}
-															className="bg-white text-black p-3 mb-3 rounded shadow cursor-move"
+															className="bg-[#def7ef] text-black p-3 mb-3 rounded shadow cursor-move"
 														>
-															<p className="font-bold">{product.material}</p>
-															<p>{product.description}</p>
+															<p className="text-start font-bold text-[10px]">
+																{product.material}
+															</p>
+															<p className="text-start text-sm">
+																{product.description}
+															</p>
 														</div>
 													)}
 												</Draggable>
