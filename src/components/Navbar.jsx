@@ -23,7 +23,7 @@ const Navbar = () => {
         </li>
         <li className='p-4'>
           <NavLink to='/login'>
-            <button className='bg-[#00df9a] w-[130px] rounded-md font-medium my-6 mx-auto py-3 text-black'>
+            <button className='bg-[#00df9a] w-[130px] rounded-md font-medium my-6 mx-auto py-3 text-white'>
               Log In
             </button>
           </NavLink>
@@ -50,7 +50,7 @@ const Navbar = () => {
         </li>
         <li className='p-4'>
           <NavLink to='/login' onClick={() => setNav(false)}>
-            <button className='bg-[#00df9a] w-[80px] rounded-md my-4 mx-auto py-2 text-black'>
+            <button className='bg-[#00df9a] w-[80px] rounded-md my-4 mx-auto py-2 text-white'>
               Log In
             </button>
           </NavLink>
