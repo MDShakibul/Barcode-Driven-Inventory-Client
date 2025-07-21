@@ -17,22 +17,37 @@ const Hero = () => {
     return () => stopScanning();
   }, [scanning]);
 
-  const startScanning = () => {
-    codeReader.current.decodeFromVideoDevice(
-      null,
-      videoRef.current,
-      (result, err) => {
-        if (result) {
-          setResult(result.getText());
-          setScanning(false);
-        }
+const startScanning = () => {
+  if (
+    typeof navigator === 'undefined' ||
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ) {
+    alert("Your browser does not support camera access.");
+    return;
+  }
 
-        if (err && !(err.name === 'NotFoundException')) {
-          console.error(err);
-        }
+  if (!videoRef.current) {
+    console.warn("Video element not ready.");
+    return;
+  }
+
+  codeReader.current
+    .decodeFromVideoDevice(null, videoRef.current, (result, err) => {
+      if (result) {
+        setResult(result.getText());
+        setScanning(false);
       }
-    );
-  };
+
+      if (err && !(err.name === 'NotFoundException')) {
+        console.error(err);
+      }
+    })
+    .catch((err) => {
+      console.error("Failed to access camera:", err);
+    });
+};
+
 
   const stopScanning = () => {
     codeReader.current.reset();
