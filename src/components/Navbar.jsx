@@ -19,7 +19,7 @@ const Navbar = () => {
           <NavLink to='/' className='hover:underline'>Home</NavLink>
         </li>
         <li className='p-4'>
-          <NavLink to='/dashboard' className='hover:underline'>Dashboard</NavLink>
+          <NavLink to='/products' className='hover:underline'>Products</NavLink>
         </li>
         <li className='p-4'>
           <NavLink to='/login'>
@@ -46,7 +46,7 @@ const Navbar = () => {
           <NavLink to='/' onClick={() => setNav(false)}>Home</NavLink>
         </li>
         <li className='p-4 border-b border-gray-600 text-white'>
-          <NavLink to='/dashboard' onClick={() => setNav(false)}>Dashboard</NavLink>
+          <NavLink to='/products' onClick={() => setNav(false)}>Products</NavLink>
         </li>
         <li className='p-4'>
           <NavLink to='/login' onClick={() => setNav(false)}>

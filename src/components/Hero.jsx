@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { BrowserMultiFormatReader } from '@zxing/library';
-import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 
 const Hero = () => {
@@ -70,28 +69,61 @@ const Hero = () => {
 		setScanning(true);
 	};
 
-/*   const fetchProductDetails = async (barcode = "8941102311675") => {
-		try {
-			const res = await fetch(`:https://products-test-aci.onrender.com/product/${barcode}`);
-			const data = await res.json();
-      console.log(data)
-			setProduct(data);
-		} catch (error) {
-			console.error("API fetch failed:", error);
-		}
-	}; */
-
-  const fetchProductDetails = async (barcode = "8941102311657") => {
+	/* const fetchProductDetails = async (code) => {
 	try {
-		const res = await axios.get(`https://products-test-aci.onrender.com/product/8941102311675`);
-		console.log(res.data);
-		setProduct(res.data);
+		const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/products/product-details/${code}`);
+		const product = res?.data?.data;
+
+		setProduct(product);
+
+		// Second: POST to another API using the received product
+		if (product) {
+			await axios.patch('${import.meta.env.VITE_API_BASE_URL}/products/add-product', product); // update with your real POST endpoint
+			console.log("Product saved successfully.");
+		}
 	} catch (error) {
 		console.error("API fetch failed:", error);
 	}
-};
+}; */
 
-  console.log(product)
+	const fetchProductDetails = async (code) => {
+		try {
+			// First: GET product details
+			const res = await fetch(
+				`${import.meta.env.VITE_API_BASE_URL}/products/product-details/${code}`
+			);
+
+			if (!res.ok) {
+				throw new Error(`Fetch failed with status: ${res.status}`);
+			}
+
+			const json = await res.json();
+			const product = json?.data;
+			setProduct(product);
+
+			// Second: PATCH to another API using the received product
+			if (product) {
+				const patchRes = await fetch(
+					`${import.meta.env.VITE_API_BASE_URL}/products/add-product`,
+					{
+						method: 'PATCH',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify(product),
+					}
+				);
+
+				if (!patchRes.ok) {
+					throw new Error(`PATCH failed with status: ${patchRes.status}`);
+				}
+
+				console.log('Product saved successfully.');
+			}
+		} catch (error) {
+			console.error('API fetch failed:', error);
+		}
+	};
 
 	return (
 		<div className="text-white">
@@ -115,8 +147,6 @@ const Hero = () => {
 					</button>
 				</div>
 
-        <button className="bg-[#00df9a] text-black px-6 py-2 rounded font-bold hover:bg-[#00c481] transition" onClick={fetchProductDetails}>click</button>
-
 				{scanning && (
 					<div className="mt-6 flex justify-center">
 						<video
@@ -128,10 +158,9 @@ const Hero = () => {
 					</div>
 				)}
 
-				{result && (
+				{product && (
 					<div className="mt-6 text-xl">
-						<h3 className="font-bold">Scanned Result:</h3>
-						<p className="text-[#00df9a]">{result}</p>
+						<p className="text-[#00df9a]">{product?.description}</p>
 					</div>
 				)}
 			</div>
